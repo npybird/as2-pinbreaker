@@ -31,38 +31,59 @@ struct CodeView<AncillaryView>: View where AncillaryView: View {    // Ancillary
     var body: some View {
         HStack {
             ForEach(code.pegs.indices, id: \.self) { index in
-                PegView(peg: code.pegs[index])
-                    .padding(Selection.border)
-                    .background {
-                        Group {
-                            if selection == index, code.kind == .guess {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .foregroundStyle(Selection.color)
-                                    .matchedGeometryEffect(id: "selection", in: selectionNameSpace)
-                            }
-                        }
-                        .animation(.selection, value: selection)
-                    }
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundStyle(code.isHidden ? Color.gray : .clear)
-                            .transaction {
-                                transaction in if code.isHidden {
-                                    transaction.animation = nil
-                                }
-                            }
-                    }
-                    .onTapGesture {
-                        if code.kind == .guess {
-                            selection = index
-                            
+                PegView(
+                    peg: displayPeg(at: index),
+                    match: matchForPeg(at: index)
+                )
+                .padding(Selection.border)
+                .background {
+                    Group {
+                        if selection == index, code.kind == .guess {
+                            RoundedRectangle(cornerRadius: 10)
+                                .foregroundStyle(Selection.color)
+                                .matchedGeometryEffect(id: "selection", in: selectionNameSpace)
                         }
                     }
+                    .animation(.selection, value: selection)
+                }
+                .onTapGesture {
+                    if code.kind == .guess {
+                        selection = index
+                    }
+                }
+                //                .overlay {
+                //                    RoundedRectangle(cornerRadius: 10)
+                //                        .foregroundStyle(code.isHidden ? Color.gray : .clear)
+                //                        .transaction {
+                //                            transaction in if code.isHidden {
+                //                                transaction.animation = nil
+                //                            }
+                //                        }
+                //                }
+                //                }
             }
             Color.clear.aspectRatio(1, contentMode: .fit)
                 .overlay {
                     ancillaryView()
                 }
+        }
+    }
+    
+    // helper func
+    func displayPeg(at index: Int) ->  Peg {
+        if code.isHidden {
+            return ""
+        } else {
+            return code.pegs[index]
+        }
+    }
+    
+    func matchForPeg(at index: Int) -> Match? {
+        switch code.kind {
+        case .attempt(let matches):
+            return matches[index]
+        default:
+            return nil
         }
     }
 }

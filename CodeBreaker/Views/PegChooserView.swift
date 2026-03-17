@@ -14,11 +14,13 @@ struct PegChooserView: View {
     // MARK: Data Out Function
     let onChoose: (Peg) -> Void
     
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 5)
+    
     // MARK: - body
     var body: some View {
-        HStack {
+        LazyVGrid(columns: columns, spacing: 12) {
             ForEach(choices, id: \.self) { peg in
-                PegView(peg: peg)
+                PegView(peg: peg, match: nil)
                     .onTapGesture {
                         onChoose(peg)
                     }

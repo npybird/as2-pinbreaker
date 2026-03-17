@@ -20,7 +20,8 @@ struct CodeBreakerView: View {
             Button("Restart") {
                 withAnimation(.restart) {    // animation แบบ explicit (ทำทันที)
                     restarting = true
-                    game.restart()
+                    game = CodeBreaker()
+                    selection = 0
                 } completion: {     // เมื่อทำ animation เสร็จ
                     withAnimation(.restart) {
                         restarting = false
@@ -49,14 +50,8 @@ struct CodeBreakerView: View {
                 }
                 
                 ForEach(game.attempts.indices.reversed(), id: \.self) { index in
-                    CodeView(code: game.attempts[index]) {
-                        let showMarkers = !hideMostRecentMarkers || index != game.attempts.count - 1
-                        
-                        if showMarkers {
-                            MatchMarkers(matches: game.attempts[index].matches)
-                        }
-                    }
-                    .transition(.attempt(game.isOver))
+                    CodeView(code: game.attempts[index])
+                        .transition(.attempt(game.isOver))
                 }
             }
             

@@ -10,9 +10,14 @@ import Foundation
 
 struct Code {
     var kind: Kind
-    var pegs: [Peg] = Array(repeating: Code.missing, count: 4)
+    var pegs: [Peg]
     
-    static let missing: Peg = .clear
+    static let missing: Peg = ""
+    
+    init(kind: Kind, pegCount: Int) {
+        self.kind = kind
+        self.pegs = Array(repeating: Code.missing, count: pegCount)
+    }
     
     enum Kind: Equatable {
         case master(isHidden: Bool)
@@ -29,7 +34,7 @@ struct Code {
     }
     
     mutating func reset() {
-        pegs = Array(repeating: Code.missing, count: 4)
+        pegs = Array(repeating: Code.missing, count: pegs.count)
     }
     
     var isHidden: Bool {
